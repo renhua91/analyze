@@ -236,6 +236,151 @@
             
               
                 
+                <a class="post-title-link" href="/2016/03/17/ELK搭建实时日志收集系统/" itemprop="url">
+                  ELK搭建实时日志收集系统
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-17T11:52:27+08:00" content="2016-03-17">
+              2016-03-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/17/ELK搭建实时日志收集系统/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/17/ELK搭建实时日志收集系统/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="实时日志统一收集的好处："><a href="#实时日志统一收集的好处：" class="headerlink" title="实时日志统一收集的好处："></a>实时日志统一收集的好处：</h3><pre><code>1、快速定位集群中问题机器
+
+2、无需下载整个日志文件（往往比较大，下载耗时多）
+
+3、可以对日志进行统计
+
+  a、发现出现次数最多的异常，进行调优处理
+
+  b、统计爬虫ip
+
+  c、统计用户行为，做聚类分析等    
+</code></pre><p>基于上面的需求，我采用了 ELK（elasticsearch + logstash + kibana）的方案，安装方法请参考 <a href="https://github.com/renhua91/ELK_Tutorial" target="_blank" rel="external">ELK_Tutorial</a> , 这里我主要讲讲我遇到的问题。</p>
+<h3 id="LVS-分发UDP请求不成功的问题"><a href="#LVS-分发UDP请求不成功的问题" class="headerlink" title="LVS 分发UDP请求不成功的问题"></a>LVS 分发UDP请求不成功的问题</h3><p>为了不影响线上集群的性能，我们采取了UDP的方式传输日志消息，如下图：<img src="/images/jiagoutu.jpg" alt=""></p>
+<p>而负载均衡我采用了LVS，在配置LVS时，我发现需要在<code>keepalived.conf</code> 文件里面使<br>用<code>MISC_CHECK</code>方法才能在<code>protocol = UDP</code>的情况下成功检测到 real_server，并且分发成功，在keepalived.conf中关键配置的地方是：</p>
+<pre><code class="html">real_server 机器A 12201 {  
+    weight 1   
+    MISC_CHECK {  
+        misc_path &quot;/etc/keepalived/udp_check.sh 机器A 12201&quot;        
+        misc_timeout 10
+    }  
+}
+</code></pre>
+<p>而<code>udp_check.sh</code> 这个文件是我自己写的，里面的内容很简单：</p>
+<pre><code class="html">/usr/bin/nc -uz -w1 $1 $2 | grep succeeded &gt;/dev/null
+exit $?
+</code></pre>
+<p>这里需要注意的是<code>udp_check.sh</code> 这个文件的权限，我这里设置的是 <code>755</code></p>
+<h3 id="logstash集群发送的日志乱序"><a href="#logstash集群发送的日志乱序" class="headerlink" title="logstash集群发送的日志乱序"></a>logstash集群发送的日志乱序</h3><p>这个问题解决方法很简单，统一每台logstash机器的系统时间即可。</p>
+<h3 id="elasticsearch-集群脑裂"><a href="#elasticsearch-集群脑裂" class="headerlink" title="elasticsearch 集群脑裂"></a>elasticsearch 集群脑裂</h3><p>出现脑裂，即无法选举出master的情况，解决方式是加大心跳检测时间，高负载的情况下，可能出现master响应较慢，这时不能极端的认为master down掉了。</p>
+<p>附下面是应用后场景<img src="/images/tongji.png" alt=""></p>
+<p>另外我们还基于ES API做了分析<img src="/images/email.png" alt=""> <img src="/images/email2.png" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/03/11/欢迎使用 Cmd Markdown 编辑阅读器/" itemprop="url">
                   欢迎使用 Cmd Markdown 编辑阅读器
                 </a>
@@ -470,7 +615,7 @@ Bob--&gt;Alice: I am good thanks!
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -487,7 +632,7 @@ Bob--&gt;Alice: I am good thanks!
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
