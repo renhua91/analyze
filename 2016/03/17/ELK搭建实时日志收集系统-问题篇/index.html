@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="ELK 日志收集," />
 
 
 
@@ -57,15 +57,51 @@
 
 
 
-<meta name="description" content="if u don&apos;t do it now, u&apos;ll never do it">
-<meta property="og:type" content="website">
-<meta property="og:title" content="renhua's blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="实时日志统一收集的好处：1、快速定位集群中问题机器
+
+2、无需下载整个日志文件（往往比较大，下载耗时多）
+
+3、可以对日志进行统计
+
+  a、发现出现次数最多的异常，进行调优处理
+
+  b、统计爬虫ip
+
+  c、统计用户行为，做聚类分析等    
+基于上面的需求，我采用了 ELK（elasticsearch + logstash + kibana）的方案，安装方法请参考 ELK_Tutorial">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ELK搭建实时日志收集系统-问题篇">
+<meta property="og:url" content="http://yoursite.com/2016/03/17/ELK搭建实时日志收集系统-问题篇/index.html">
 <meta property="og:site_name" content="renhua's blog">
-<meta property="og:description" content="if u don&apos;t do it now, u&apos;ll never do it">
+<meta property="og:description" content="实时日志统一收集的好处：1、快速定位集群中问题机器
+
+2、无需下载整个日志文件（往往比较大，下载耗时多）
+
+3、可以对日志进行统计
+
+  a、发现出现次数最多的异常，进行调优处理
+
+  b、统计爬虫ip
+
+  c、统计用户行为，做聚类分析等    
+基于上面的需求，我采用了 ELK（elasticsearch + logstash + kibana）的方案，安装方法请参考 ELK_Tutorial">
+<meta property="og:image" content="http://yoursite.com/images/jiagoutu.jpg">
+<meta property="og:updated_time" content="2016-03-21T03:43:09.248Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="renhua's blog">
-<meta name="twitter:description" content="if u don&apos;t do it now, u&apos;ll never do it">
+<meta name="twitter:title" content="ELK搭建实时日志收集系统-问题篇">
+<meta name="twitter:description" content="实时日志统一收集的好处：1、快速定位集群中问题机器
+
+2、无需下载整个日志文件（往往比较大，下载耗时多）
+
+3、可以对日志进行统计
+
+  a、发现出现次数最多的异常，进行调优处理
+
+  b、统计爬虫ip
+
+  c、统计用户行为，做聚类分析等    
+基于上面的需求，我采用了 ELK（elasticsearch + logstash + kibana）的方案，安装方法请参考 ELK_Tutorial">
+<meta name="twitter:image" content="http://yoursite.com/images/jiagoutu.jpg">
 
 
 
@@ -83,7 +119,7 @@
   };
 </script>
 
-  <title> renhua's blog </title>
+  <title> ELK搭建实时日志收集系统-问题篇 | renhua's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -114,9 +150,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -213,9 +247,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -235,10 +269,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/03/17/ELK搭建实时日志收集系统-问题篇/" itemprop="url">
-                  ELK搭建实时日志收集系统-问题篇
-                </a>
+                ELK搭建实时日志收集系统-问题篇
               
             
           </h1>
@@ -303,9 +334,7 @@
       
 
       
-        
-          
-            <h3 id="实时日志统一收集的好处："><a href="#实时日志统一收集的好处：" class="headerlink" title="实时日志统一收集的好处："></a>实时日志统一收集的好处：</h3><pre><code>1、快速定位集群中问题机器
+        <h3 id="实时日志统一收集的好处："><a href="#实时日志统一收集的好处：" class="headerlink" title="实时日志统一收集的好处："></a>实时日志统一收集的好处：</h3><pre><code>1、快速定位集群中问题机器
 
 2、无需下载整个日志文件（往往比较大，下载耗时多）
 
@@ -335,32 +364,37 @@ exit $?
 <h3 id="logstash集群发送的日志乱序"><a href="#logstash集群发送的日志乱序" class="headerlink" title="logstash集群发送的日志乱序"></a>logstash集群发送的日志乱序</h3><p>这个问题解决方法很简单，统一每台logstash机器的系统时间即可。</p>
 <h3 id="elasticsearch-集群脑裂"><a href="#elasticsearch-集群脑裂" class="headerlink" title="elasticsearch 集群脑裂"></a>elasticsearch 集群脑裂</h3><p>出现脑裂，即无法选举出master的情况，解决方式是加大心跳检测时间，高负载的情况下，可能出现master响应较慢，这时不能极端的认为master down掉了。</p>
 
-          
-        
       
     </div>
 
     <div>
       
+        
+      
     </div>
 
     <footer class="post-footer">
       
-
+        <div class="post-tags">
+          
+            <a href="/tags/ELK-日志收集/" rel="tag">#ELK 日志收集</a>
+          
+        </div>
       
 
       
+
       
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -368,6 +402,14 @@ exit $?
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/17/ELK搭建实时日志收集系统-问题篇/"
+           data-title="ELK搭建实时日志收集系统-问题篇" data-url="http://yoursite.com/2016/03/17/ELK搭建实时日志收集系统-问题篇/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -387,8 +429,17 @@ exit $?
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="https://avatars3.githubusercontent.com/u/7193423?v=3&amp;s=460"
@@ -439,6 +490,23 @@ exit $?
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实时日志统一收集的好处："><span class="nav-number">1.</span> <span class="nav-text">实时日志统一收集的好处：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LVS-分发UDP请求不成功的问题"><span class="nav-number">2.</span> <span class="nav-text">LVS 分发UDP请求不成功的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logstash集群发送的日志乱序"><span class="nav-number">3.</span> <span class="nav-text">logstash集群发送的日志乱序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#elasticsearch-集群脑裂"><span class="nav-number">4.</span> <span class="nav-text">elasticsearch 集群脑裂</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
       
 
     </div>
@@ -530,6 +598,167 @@ exit $?
 
 
   
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.scheme !== 'Pisces' && (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always')) {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
 
   
 
